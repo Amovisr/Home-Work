@@ -1,0 +1,6 @@
+|                  Method |      Mean |     Error |    StdDev |    Median |
+|------------------------ |----------:|----------:|----------:|----------:|
+| BenchmarkFirstHomerWork | 0.0233 ns | 0.0178 ns | 0.0293 ns | 0.0066 ns |
+| BenchmarkSecondHomerWork| 0.0449 ns | 0.0257 ns | 0.0361 ns |
+| BenchmarkThirdHomerWork | 0.0179 ns | 0.0186 ns | 0.0301 ns | 0.0 ns |
+| BenchmarkFourthHomerWork| 0.0229 ns | 0.0176 ns | 0.0229 ns |
