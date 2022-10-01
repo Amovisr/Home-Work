@@ -1,0 +1,61 @@
+﻿using MetricsAgent.Controllers;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+
+namespace MetricsAgentTests.Controllers
+{
+    public class NetworkMetricsControllerTests
+    {
+        private readonly NetworkMetricsController _controller;
+        private readonly Mock<INetworkMetricsRepository> _repositoryMock;
+        private readonly Mock<ILogger<NetworkMetricsController>> _loggerMock;
+
+        public NetworkMetricsControllerTests()
+        {
+            _repositoryMock = new Mock<INetworkMetricsRepository>();
+            _loggerMock = new Mock<ILogger<NetworkMetricsController>>();
+
+            _controller = new NetworkMetricsController(_repositoryMock.Object, _loggerMock.Object);
+        }
+
+
+        [Fact]
+        public void Create_ShouldCall_Create_From_Repository()
+        {
+            // устанавливаем параметр заглушки
+            // в заглушке прописываем что в репозиторий прилетит CpuMetric объект
+            _repositoryMock.Setup(repository =>
+                repository.Create(It.IsAny<NetworkMetric>())).Verifiable();
+
+            // выполняем действие на контроллере
+            var result = _controller.Create(new NetworkMetricCreateRequest
+            {
+                Time = DateTimeOffset.Now,
+                Value = 50
+            });
+
+            _repositoryMock.Verify(repository =>
+                repository.Create(It.IsAny<NetworkMetric>()), Times.AtMostOnce());
+        }
+
+        [Fact]
+        public void GetByTimePeriod_ShouldCall_GetByTimePeriod_From_Repository()
+        {
+            _repositoryMock.Setup(repository =>
+                repository.GetByTimePeriod(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
+                .Returns(new List<NetworkMetric>());
+
+            _controller.GetNetworkMetrics(DateTimeOffset.Now, DateTimeOffset.Now);
+
+            _repositoryMock.Verify(repository =>
+                repository.GetByTimePeriod(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()), Times.AtMostOnce());
+        }
+    }
+}
